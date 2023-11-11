@@ -3,6 +3,7 @@ from dash import Dash, html, dcc, Input, Output, callback
 import plotly.express as px
 import pandas as pd
 import dash_bootstrap_components as dbc
+import dash_auth                          #lib u/ passwrd
 
 ### Import data disini
 
@@ -14,6 +15,10 @@ with open('data_cache/Indonesia_provinces.geojson', 'r') as geojson_file:
 shipping = pd.read_pickle('data_input/shipping_clean') #membaca data source, bisa di rubah ke lsg konek ke databse (BQ/posgrest),
                                                        #setiap perubahn di tabel akan automatis merubah didashboard
 
+#import username & pass
+VALID_USERNAME_PASSWORD_PAIRS = {
+    'biadmin': 'paxel321'
+}
 #------------------------------------------------------------------------
 ### Info card disini
 
@@ -33,7 +38,8 @@ card_total_pengiriman = [
                                                         }),
     dbc.CardBody(
         [
-            html.H1(f"{total_pesanan:,}", className="card-title"),
+            html.H1(f"{total_pesanan:,}", className="card-title",style={'color': 'white',
+                                                      }),
             
         ]
     ),
@@ -46,7 +52,9 @@ card_completed_rate = [
                    ),
     dbc.CardBody(
         [
-            html.H1(f"{completed_rate:.2f}%", className="card-title"),
+            html.H1(f"{completed_rate:.2f}%", className="card-title",
+                                            style={'color': 'white',
+                                                      }),
             
         ]
     ),
@@ -59,7 +67,9 @@ card_delivery_time = [
                    ),
     dbc.CardBody(
         [
-            html.H1(f"{delivery_time:.0f} hari", className="card-title"),
+            html.H1(f"{delivery_time:.0f} hari", className="card-title",
+                                                style={'color': 'white',
+                                                      }),
             
         ]
     ),
@@ -138,6 +148,14 @@ app = Dash(
     name='Dashboard - Pengiriman COD'
     ) #pilih tema yg sdh di sediakan DASH
 
+server=app.server
+
+##----menambhakan usrname & pass-----------
+auth = dash_auth.BasicAuth(                 #memanggil usrnme & pass
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
+#---------------------------------------------------------------------------------------
 app.title = 'Dashboard - Pengiriman COD'
 
 navbar = dbc.NavbarSimple(             #pilih/definiskan layout navigasi page/halaman web
